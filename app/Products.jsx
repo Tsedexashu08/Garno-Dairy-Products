@@ -14,6 +14,7 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import { getEthiopianDateWithAmharic } from './EthiopianDate';
 
 const { width } = Dimensions.get('window');
 
@@ -341,7 +342,8 @@ const DairyShopScreen = () => {
             </TouchableOpacity>
         );
     };
-
+  
+  const formatted =getEthiopianDateWithAmharic().fullDate;
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground
@@ -351,7 +353,7 @@ const DairyShopScreen = () => {
                 {/* Header */}
                 <View style={styles.header}>
                     <View>
-                        <Text style={styles.title}>ለገበያ ያቀረብናቸው ምርቶች</Text>
+                        <Text style={styles.title}>ለገበያ ያቀረብናቸው ምርቶች-{formatted}</Text>
                         <Text style={styles.subtitle}>ደንበኛ የፈለጋቸውን ሚርቶችን ከመጠናቸው ጋር ከታች ይምረጡ</Text>
                     </View>
 
@@ -413,8 +415,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         paddingVertical: 10,
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        borderBottomWidth: 1,
-        borderBottomColor: '#E0E0E0',
+        // borderBottomWidth: 1,
+        // borderBottomColor: '#E0E0E0',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,

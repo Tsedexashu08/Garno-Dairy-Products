@@ -17,6 +17,7 @@
     "@react-navigation/native": "^7.1.8",
     "@supabase/supabase-js": "^2.58.0",
     "ethiopian-date": "^0.0.6",
+    "ethiopic-calendar": "^2.0.0",
     "expo": "~54.0.9",
     "expo-constants": "~18.0.9",
     "expo-dev-client": "~6.0.12",
