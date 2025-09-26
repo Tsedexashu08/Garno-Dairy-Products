@@ -1,53 +1,56 @@
 import { FontAwesome } from '@expo/vector-icons';
 import 'expo-dev-client';
+import { router } from 'expo-router';
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 
 
 
 const Home = () => {
-             return (
-               <ImageBackground
-                 source={require('../assets/images/Bg.jpg')}
-                 style={styles.background}
-                 >
-                 <View style={styles.container}>
-                   <Text style={styles.title}>ጋርኖ የወተት ምርቶች</Text>
-                   <Text style={styles.subtitle}>የተለያዩ የምርት ግብይቶች ያስተዳድሩ</Text>
-           
-                   <View style={styles.buttonContainer}>
-                     <TouchableOpacity style={[styles.button, styles.predictButton]}  >
-                       <View style={styles.buttonContent}>
-                         <FontAwesome name="money" size={32} color="#ffff" />
-                         <View style={styles.buttonTextContainer}>
-                           <Text style={styles.buttonText}>ሽያጭ ፈጽም</Text>
-                           <Text style={styles.buttonSubtext}>ምርቶችን ለመሸጥ ይህን ይንኩ</Text>
-                         </View>
-                       </View>
-                     </TouchableOpacity>
-           
-                     {/* <Link href={'/Add'}> */}
-                     <TouchableOpacity style={[styles.button, styles.rateButton]}>
-                       <View style={styles.buttonContent}>
-                         <FontAwesome name="money" size={32} color="#FFD700" />
-                         <View style={styles.buttonTextContainer}>
-                           <Text style={styles.buttonText}>የቀን ገቢ አሳይ</Text>
-                           <Text style={styles.buttonSubtext}>የዛሬን አጠቃላይ ገቢ ለማየት</Text>
-                         </View>
-                       </View>
-                     </TouchableOpacity>
-                     <TouchableOpacity style={[styles.button, styles.rateButton]}>
-                       <View style={styles.buttonContent}>
-                         <FontAwesome name="plus" size={32} color="#FFD700" />
-                         <View style={styles.buttonTextContainer}>
-                           <Text style={styles.buttonText}>አዲስ ምርት ጨምር</Text>
-                           <Text style={styles.buttonSubtext}>ወደ ሱቅ የገባ አዲስ ምርት ልመጨመር</Text>
-                         </View>
-                       </View>
-                     </TouchableOpacity>
-                     {/* </Link> */}
-                   </View>
-                   {/* 
+  
+
+  return (
+    <ImageBackground
+      source={require('../assets/images/Bg.jpg')}
+      style={styles.background}
+    >
+      <View style={styles.container}>
+        <Text style={styles.title}>ጋርኖ የወተት ምርቶች</Text>
+        <Text style={styles.subtitle}>የተለያዩ የምርት ግብይቶች ያስተዳድሩ</Text>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={[styles.button, styles.predictButton]} onPress={() => {router.push('/Products');}} >
+            <View style={styles.buttonContent}>
+              <FontAwesome name="money" size={32} color="#ffff" />
+              <View style={styles.buttonTextContainer}>
+                <Text style={styles.buttonText}>ሽያጭ ፈጽም</Text>
+                <Text style={styles.buttonSubtext}>ምርቶችን ለመሸጥ ይህን ይንኩ</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+
+          {/* <Link href={'/Add'}> */}
+          <TouchableOpacity style={[styles.button, styles.rateButton]}>
+            <View style={styles.buttonContent}>
+              <FontAwesome name="money" size={32} color="#FFD700" />
+              <View style={styles.buttonTextContainer}>
+                <Text style={styles.buttonText}>የቀን ገቢ አሳይ</Text>
+                <Text style={styles.buttonSubtext}>የዛሬን አጠቃላይ ገቢ ለማየት</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, styles.rateButton]}>
+            <View style={styles.buttonContent}>
+              <FontAwesome name="plus" size={32} color="#FFD700" />
+              <View style={styles.buttonTextContainer}>
+                <Text style={styles.buttonText}>አዲስ ምርት ጨምር</Text>
+                <Text style={styles.buttonSubtext}>ወደ ሱቅ የገባ አዲስ ምርት ለመጨመር</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+          {/* </Link> */}
+        </View>
+        {/* 
                    <View style={styles.statsContainer}>
                      <View style={styles.statItem}>
                        <Text style={styles.statNumber}>15</Text>
@@ -64,9 +67,9 @@ const Home = () => {
                        <Text style={styles.statLabel}>Accuracy Rate</Text>
                      </View>
                    </View> */}
-                 </View>
-               </ImageBackground>
-           
+      </View>
+    </ImageBackground>
+
   );
 };
 
