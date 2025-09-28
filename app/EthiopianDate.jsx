@@ -35,7 +35,7 @@ export const getEthiopianDateWithAmharic = (gregorianDate = new Date()) => {
     const amharicMonth = amharicMonths[ethMonth - 1];
     
     return {
-        fullDate: `${amharicDay}፣ ${ethDay} ${amharicMonth} ${ethYear}`,
+        fullDate: `${amharicDay} -  ${amharicMonth} ${ethDay}  ${ethYear}`,
         day: amharicDay,
         dayNumber: ethDay,
         month: amharicMonth,
@@ -46,5 +46,7 @@ export const getEthiopianDateWithAmharic = (gregorianDate = new Date()) => {
 };
 
 // Usage example
-const todayEthiopian = getEthiopianDateWithAmharic();
-console.log(todayEthiopian.fullDate); // "ማክሰኞ፣ 6 ሚያዝያ 2016"
+// const todayEthiopian = getEthiopianDateWithAmharic();
+// console.log(todayEthiopian.fullDate); // "ማክሰኞ፣ 6 ሚያዝያ 2016"
+
+export default getEthiopianDateWithAmharic;
