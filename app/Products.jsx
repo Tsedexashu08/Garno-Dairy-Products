@@ -7,17 +7,24 @@ import {
     Image,
     ImageBackground,
     Modal,
+    Platform,
+    SafeAreaView,
     ScrollView,
+    StatusBar,
     StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
     View
 } from 'react-native';
+
 import { supabase } from '../services/Database';
 import Header from './components/Header';
 
 const { width } = Dimensions.get('window');
+// Android-specific constants
+const ANDROID_STATUS_BAR_HEIGHT = StatusBar.currentHeight || 0;
+const ANDROID_NAVIGATION_BAR_HEIGHT = Platform.OS === 'android' ? 24 : 0;
 
 export default function DairyOrderComponent() {
     const [products, setProducts] = useState([]);
@@ -26,7 +33,7 @@ export default function DairyOrderComponent() {
     const [error, setError] = useState(null);
     const [paymentModalVisible, setPaymentModalVisible] = useState(false);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
-    const [clearConfirm, setclearConfirm] = useState(false);
+
 
     // Payment methods in Amharic
     const paymentMethods = [
@@ -59,7 +66,7 @@ export default function DairyOrderComponent() {
     };
 
     const handleQuantityChange = (productId, value) => {
-        // Accept any string input
+        
         setQuantities(prev => ({
             ...prev,
             [productId]: value
@@ -202,83 +209,90 @@ export default function DairyOrderComponent() {
         const currentQuantity = quantities[item.product_id] || 0;
 
         return (
-            <View style={styles.card}>
-                <View style={styles.cardShadow} />
-                <Image
-                    source={{ uri: item.image }}
-                    style={styles.productImage}
-                    resizeMode="cover"
-                />
-                <View style={styles.productInfo}>
-                    <Text style={styles.productName}>{item.name}</Text>
-                    <Text style={styles.productDetails}>
-                        {item.measurement} • ${item.price.toFixed(2)}
-                    </Text>
-                    {item.has_container && (
-                        <Text style={styles.containerText}>✓ Includes Container</Text>
-                    )}
+           
+                <View style={styles.card}>
+                    <View style={styles.cardShadow} />
+                    <Image
+                        source={{ uri: item.image }}
+                        style={styles.productImage}
+                        resizeMode="cover"
+                    />
+                    <View style={styles.productInfo}>
+                        <Text style={styles.productName}>{item.name}</Text>
+                        <Text style={styles.productDetails}>
+                            {item.measurement} • ${item.price.toFixed(2)}
+                        </Text>
+                        {item.has_container && (
+                            <Text style={styles.containerText}>✓ Includes Container</Text>
+                        )}
 
-                    <View style={styles.quantityContainer}>
-                        <TouchableOpacity
-                            style={styles.quantityButton}
-                            onPress={() => decrementQuantity(item.product_id)}
-                        >
-                            <Text style={styles.quantityButtonText}>-</Text>
-                        </TouchableOpacity>
+                        <View style={styles.quantityContainer}>
+                            <TouchableOpacity
+                                style={styles.quantityButton}
+                                onPress={() => decrementQuantity(item.product_id)}
+                            >
+                                <Text style={styles.quantityButtonText}>-</Text>
+                            </TouchableOpacity>
 
-                        <TextInput
-                            style={styles.quantityInput}
-                            keyboardType="decimal-pad"
-                            placeholder="0"
-                            value={currentQuantity === 0 ? '' : String(currentQuantity)}
-                            onChangeText={(value) => handleQuantityChange(item.product_id, value)}
-                            accessibilityLabel={`Quantity for ${item.name}`}
-                            maxLength={10}
-                        />
+                            <TextInput
+                                style={styles.quantityInput}
+                                keyboardType="decimal-pad"
+                                placeholder="0"
+                                value={currentQuantity === 0 ? '' : String(currentQuantity)}
+                                onChangeText={(value) => handleQuantityChange(item.product_id, value)}
+                                accessibilityLabel={`Quantity for ${item.name}`}
+                                maxLength={10}
+                            />
 
-                        <TouchableOpacity
-                            style={styles.quantityButton}
-                            onPress={() => incrementQuantity(item.product_id)}
-                        >
-                            <Text style={styles.quantityButtonText}>+</Text>
-                        </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.quantityButton}
+                                onPress={() => incrementQuantity(item.product_id)}
+                            >
+                                <Text style={styles.quantityButtonText}>+</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
-            </View>
+           
         );
     };
 
     if (loading) {
         return (
-            <ImageBackground
-                source={require('../assets/images/Bg.jpg')}
-                style={styles.background}
-                resizeMode="cover"
-            >
-                <Header />
-                <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#4ECDC4" />
-                    <Text style={styles.loadingText}>Loading Products...</Text>
-                </View>
-            </ImageBackground>
+            <SafeAreaView style={{ flex: 1, marginTop: ANDROID_STATUS_BAR_HEIGHT, marginBottom: ANDROID_NAVIGATION_BAR_HEIGHT }}>
+                <ImageBackground
+                    source={require('../assets/images/Bg.jpg')}
+                    style={styles.background}
+                    resizeMode="cover"
+                >
+                    <Header />
+                    <View style={styles.loadingContainer}>
+                        <ActivityIndicator size="large" color="#4ECDC4" />
+                        <Text style={styles.loadingText}>Loading Products...</Text>
+                    </View>
+                </ImageBackground>
+            </SafeAreaView>
         );
     }
 
     if (error) {
         return (
-            <ImageBackground
-                source={require('../assets/images/Bg.jpg')}
-                style={styles.background}
-                resizeMode="cover"
-            >
-                <Header />
-                <View style={styles.errorContainer}>
-                    <Text style={styles.errorText}>Error: {error}</Text>
-                    <TouchableOpacity style={styles.retryButton} onPress={fetchProducts}>
-                        <Text style={styles.retryButtonText}>Retry</Text>
-                    </TouchableOpacity>
-                </View>
-            </ImageBackground>
+            <SafeAreaView style={{ flex: 1, marginTop: ANDROID_STATUS_BAR_HEIGHT, marginBottom: ANDROID_NAVIGATION_BAR_HEIGHT }}>
+                <ImageBackground
+                    source={require('../assets/images/Bg.jpg')}
+                    style={styles.background}
+                    resizeMode="cover"
+                >
+                    <Header />
+
+                    <View style={styles.errorContainer}>
+                        <Text style={styles.errorText}>Error: {error}</Text>
+                        <TouchableOpacity style={styles.retryButton} onPress={fetchProducts}>
+                            <Text style={styles.retryButtonText}>Retry</Text>
+                        </TouchableOpacity>
+                    </View>
+                </ImageBackground>
+            </SafeAreaView>
         );
     }
 
@@ -288,121 +302,124 @@ export default function DairyOrderComponent() {
             style={styles.background}
             resizeMode="cover"
         >
-            <Header />
-            <FlatList
-                data={products}
-                renderItem={renderProduct}
-                keyExtractor={(item) => item.product_id.toString()}
-                numColumns={2}
-                contentContainerStyle={styles.listContainer}
-                showsVerticalScrollIndicator={true}
-            />
+            <SafeAreaView style={{ flex: 1, marginTop: ANDROID_STATUS_BAR_HEIGHT, marginBottom: ANDROID_NAVIGATION_BAR_HEIGHT }}>
+                <Header />
+                {/* <ErrorCard title="የሞባይል ዳታዎን ወይም ዋይፋይ ያብሩ !"/> */}
+                <FlatList
+                    data={products}
+                    renderItem={renderProduct}
+                    keyExtractor={(item) => item.product_id.toString()}
+                    numColumns={2}
+                    contentContainerStyle={styles.listContainer}
+                    showsVerticalScrollIndicator={true}
+                />
 
-            {/* Enhanced Receipt Section */}
-            <View style={styles.receiptContainer}>
-                <View style={styles.receiptHeader}>
-                    <Text style={styles.receiptTitle}>🛒 Order Summary</Text>
-                </View>
+                {/* Enhanced Receipt Section */}
+                <View style={styles.receiptContainer}>
+                    <View style={styles.receiptHeader}>
+                        <Text style={styles.receiptTitle}>🛒 የሂሳብ ማጠቃለይ</Text>
+                    </View>
 
-                <ScrollView
-                    style={styles.receiptItems}
-                    showsVerticalScrollIndicator={false}
-                >
-                    {getReceiptItems().length === 0 ? (
-                        <Text style={styles.emptyReceipt}>No items added to order</Text>
-                    ) : (
-                        getReceiptItems().map((item, idx) => (
-                            <View key={`${item.product_id}-${idx}`} style={styles.receiptItem}>
-                                <View style={styles.receiptItemLeft}>
-                                    <Text style={styles.receiptItemName}>{item.name}</Text>
-                                    <Text style={styles.receiptItemQuantity}>
-                                        {item.quantity} x ${item.price.toFixed(2)}
-                                    </Text>
+                    <ScrollView
+                        style={styles.receiptItems}
+                        showsVerticalScrollIndicator={false}
+                    >
+                        {getReceiptItems().length === 0 ? (
+                            <Text style={styles.emptyReceipt}>ለግዢ የተመረጠ ምርት የለም</Text>
+                        ) : (
+                            getReceiptItems().map((item, idx) => (
+                                <View key={`${item.product_id}-${idx}`} style={styles.receiptItem}>
+                                    <View style={styles.receiptItemLeft}>
+                                        <Text style={styles.receiptItemName}>{item.name}</Text>
+                                        <Text style={styles.receiptItemQuantity}>
+                                            {item.quantity} x ${item.price.toFixed(2)}
+                                        </Text>
+                                    </View>
+                                    <Text style={styles.receiptItemTotal}>${item.total}</Text>
                                 </View>
-                                <Text style={styles.receiptItemTotal}>${item.total}</Text>
+                            ))
+                        )}
+                    </ScrollView>
+
+                    {getReceiptItems().length > 0 && (
+                        <View style={styles.totalSection}>
+                            <View style={styles.totalDivider} />
+                            <View style={styles.totalRow}>
+                                <Text style={styles.totalLabel}>አጠቃላይ ሂሳብ:</Text>
+                                <Text style={styles.totalAmount}>${getGrandTotal()}</Text>
                             </View>
-                        ))
+                        </View>
                     )}
-                </ScrollView>
 
-                {getReceiptItems().length > 0 && (
-                    <View style={styles.totalSection}>
-                        <View style={styles.totalDivider} />
-                        <View style={styles.totalRow}>
-                            <Text style={styles.totalLabel}>አጠቃላይ ሂሳብ:</Text>
-                            <Text style={styles.totalAmount}>${getGrandTotal()}</Text>
-                        </View>
-                    </View>
-                )}
+                    <View style={styles.receiptActions}>
+                        <TouchableOpacity
+                            style={[styles.actionButton, styles.clearButton, getReceiptItems().length === 0 && styles.disabledButton]}
+                            onPress={cancelOrder}
+                            disabled={getReceiptItems().length === 0}
+                        >
+                            <Text style={styles.clearButtonText}>ግዢ ሰርዝ</Text>
+                        </TouchableOpacity>
 
-                <View style={styles.receiptActions}>
-                    <TouchableOpacity
-                        style={[styles.actionButton, styles.clearButton, getReceiptItems().length === 0 && styles.disabledButton]}
-                        onPress={cancelOrder}
-                        disabled={getReceiptItems().length === 0}
-                    >
-                        <Text style={styles.clearButtonText}>ግዢ ሰርዝ</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={[styles.actionButton, styles.saveButton, getReceiptItems().length === 0 && styles.disabledButton]}
-                        onPress={handleSaveOrder}
-                        disabled={getReceiptItems().length === 0}
-                    >
-                        <Text style={styles.saveButtonText}>ሂሳብ መዝግብ</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            {/* Payment Method Modal */}
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={paymentModalVisible}
-                onRequestClose={() => setPaymentModalVisible(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>የክፍያ ዘዴ ይምረጡ</Text>
-                        <Text style={styles.modalSubtitle}>Select Payment Method</Text>
-
-                        {paymentMethods.map((method) => (
-                            <TouchableOpacity
-                                key={method.value}
-                                style={[
-                                    styles.paymentOption,
-                                    selectedPaymentMethod === method.value && styles.selectedPaymentOption
-                                ]}
-                                onPress={() => setSelectedPaymentMethod(method.value)}
-                            >
-                                <Text style={[
-                                    styles.paymentOptionText,
-                                    selectedPaymentMethod === method.value && styles.selectedPaymentOptionText
-                                ]}>
-                                    {method.label}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-
-                        <View style={styles.modalActions}>
-                            <TouchableOpacity
-                                style={[styles.modalButton, styles.cancelButton]}
-                                onPress={() => setPaymentModalVisible(false)}
-                            >
-                                <Text style={styles.cancelButtonText}>ግዢ ሰርዝ</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.modalButton, styles.confirmButton]}
-                                onPress={saveOrder}
-                                disabled={!selectedPaymentMethod}
-                            >
-                                <Text style={styles.confirmButtonText}>ሂሳብ መዝግብ</Text>
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableOpacity
+                            style={[styles.actionButton, styles.saveButton, getReceiptItems().length === 0 && styles.disabledButton]}
+                            onPress={handleSaveOrder}
+                            disabled={getReceiptItems().length === 0}
+                        >
+                            <Text style={styles.saveButtonText}>ሂሳብ መዝግብ</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
-            </Modal>
 
+                {/* Payment Method Modal */}
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={paymentModalVisible}
+                    onRequestClose={() => setPaymentModalVisible(false)}
+                >
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                            <Text style={styles.modalTitle}>የክፍያ ዘዴ ይምረጡ</Text>
+                            <Text style={styles.modalSubtitle}>Select Payment Method</Text>
+
+                            {paymentMethods.map((method) => (
+                                <TouchableOpacity
+                                    key={method.value}
+                                    style={[
+                                        styles.paymentOption,
+                                        selectedPaymentMethod === method.value && styles.selectedPaymentOption
+                                    ]}
+                                    onPress={() => setSelectedPaymentMethod(method.value)}
+                                >
+                                    <Text style={[
+                                        styles.paymentOptionText,
+                                        selectedPaymentMethod === method.value && styles.selectedPaymentOptionText
+                                    ]}>
+                                        {method.label}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+
+                            <View style={styles.modalActions}>
+                                <TouchableOpacity
+                                    style={[styles.modalButton, styles.cancelButton]}
+                                    onPress={() => setPaymentModalVisible(false)}
+                                >
+                                    <Text style={styles.cancelButtonText}>ግዢ ሰርዝ</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.modalButton, styles.confirmButton]}
+                                    onPress={saveOrder}
+                                    disabled={!selectedPaymentMethod}
+                                >
+                                    <Text style={styles.confirmButtonText}>ሂሳብ መዝግብ</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+
+            </SafeAreaView>
         </ImageBackground>
     );
 }
@@ -449,7 +466,7 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         padding: 10,
-        paddingBottom: 350,
+        paddingBottom: 300,
     },
     card: {
         backgroundColor: 'rgba(255,255,255,0.95)',
