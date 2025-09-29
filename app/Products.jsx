@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
@@ -66,7 +67,7 @@ export default function DairyOrderComponent() {
     };
 
     const handleQuantityChange = (productId, value) => {
-        
+
         setQuantities(prev => ({
             ...prev,
             [productId]: value
@@ -122,7 +123,7 @@ export default function DairyOrderComponent() {
         }
         setPaymentModalVisible(true);
     };
-
+    const snapPoints = ['15%', '50%', '90%'];
     const saveOrder = async () => {
         if (!selectedPaymentMethod) {
             Alert.alert('ማስታወሻ', 'እባክዎ የክፍያ ዘዴ ይምረጡ');
@@ -209,51 +210,51 @@ export default function DairyOrderComponent() {
         const currentQuantity = quantities[item.product_id] || 0;
 
         return (
-           
-                <View style={styles.card}>
-                    <View style={styles.cardShadow} />
-                    <Image
-                        source={{ uri: item.image }}
-                        style={styles.productImage}
-                        resizeMode="cover"
-                    />
-                    <View style={styles.productInfo}>
-                        <Text style={styles.productName}>{item.name}</Text>
-                        <Text style={styles.productDetails}>
-                            {item.measurement} • ${item.price.toFixed(2)}
-                        </Text>
-                        {item.has_container && (
-                            <Text style={styles.containerText}>✓ Includes Container</Text>
-                        )}
 
-                        <View style={styles.quantityContainer}>
-                            <TouchableOpacity
-                                style={styles.quantityButton}
-                                onPress={() => decrementQuantity(item.product_id)}
-                            >
-                                <Text style={styles.quantityButtonText}>-</Text>
-                            </TouchableOpacity>
+            <View style={styles.card}>
+                <View style={styles.cardShadow} />
+                <Image
+                    source={{ uri: item.image }}
+                    style={styles.productImage}
+                    resizeMode="cover"
+                />
+                <View style={styles.productInfo}>
+                    <Text style={styles.productName}>{item.name}</Text>
+                    <Text style={styles.productDetails}>
+                        {item.measurement} • ${item.price.toFixed(2)}
+                    </Text>
+                    {item.has_container && (
+                        <Text style={styles.containerText}>✓ Includes Container</Text>
+                    )}
 
-                            <TextInput
-                                style={styles.quantityInput}
-                                keyboardType="decimal-pad"
-                                placeholder="0"
-                                value={currentQuantity === 0 ? '' : String(currentQuantity)}
-                                onChangeText={(value) => handleQuantityChange(item.product_id, value)}
-                                accessibilityLabel={`Quantity for ${item.name}`}
-                                maxLength={10}
-                            />
+                    <View style={styles.quantityContainer}>
+                        <TouchableOpacity
+                            style={styles.quantityButton}
+                            onPress={() => decrementQuantity(item.product_id)}
+                        >
+                            <Text style={styles.quantityButtonText}>-</Text>
+                        </TouchableOpacity>
 
-                            <TouchableOpacity
-                                style={styles.quantityButton}
-                                onPress={() => incrementQuantity(item.product_id)}
-                            >
-                                <Text style={styles.quantityButtonText}>+</Text>
-                            </TouchableOpacity>
-                        </View>
+                        <TextInput
+                            style={styles.quantityInput}
+                            keyboardType="decimal-pad"
+                            placeholder="0"
+                            value={currentQuantity === 0 ? '' : String(currentQuantity)}
+                            onChangeText={(value) => handleQuantityChange(item.product_id, value)}
+                            accessibilityLabel={`Quantity for ${item.name}`}
+                            maxLength={10}
+                        />
+
+                        <TouchableOpacity
+                            style={styles.quantityButton}
+                            onPress={() => incrementQuantity(item.product_id)}
+                        >
+                            <Text style={styles.quantityButtonText}>+</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
-           
+            </View>
+
         );
     };
 
@@ -315,6 +316,7 @@ export default function DairyOrderComponent() {
                 />
 
                 {/* Enhanced Receipt Section */}
+
                 <View style={styles.receiptContainer}>
                     <View style={styles.receiptHeader}>
                         <Text style={styles.receiptTitle}>🛒 የሂሳብ ማጠቃለይ</Text>

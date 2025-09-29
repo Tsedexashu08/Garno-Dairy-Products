@@ -30,7 +30,7 @@ const Home = () => {
           </TouchableOpacity>
 
           {/* <Link href={'/Add'}> */}
-          <TouchableOpacity style={[styles.button, styles.rateButton]}>
+          <TouchableOpacity style={[styles.button, styles.rateButton]} onPress={() => {router.push('/DailyReciept');}}>
             <View style={styles.buttonContent}>
               <FontAwesome name="money" size={32} color="#FFD700" />
               <View style={styles.buttonTextContainer}>

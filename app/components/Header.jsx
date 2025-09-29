@@ -1,16 +1,19 @@
 // components/Header.js
 import { StyleSheet, Text, View } from 'react-native';
 // import { getEthiopianDateWithAmharic } from '../EthiopianDate';
+import { Link } from '@react-navigation/native';
 
 const Header = () => {
     return (
         <View style={styles.header}>
+                <Link to="/DailyReciept">
             <View style={styles.headerContent}>
                 <Text style={styles.title}>ለገበያ ያቀረብናቸው ምርቶች</Text>
                 <Text style={styles.subtitle}>
                     ደንበኛ የፈለጋቸውን ምርቶችን ከመጠናቸው ጋር ከታች ይምረጡ
                 </Text>
             </View>
+                </Link>
         </View>
     );
 };
