@@ -1,14 +1,15 @@
 // components/Header.js
 import { StyleSheet, Text, View } from 'react-native';
-// import { getEthiopianDateWithAmharic } from '../EthiopianDate';
+import { getEthiopianDateWithAmharic } from '../EthiopianDate';
 
 const Header = () => {
+    const today = getEthiopianDateWithAmharic();
     return (
         <View style={styles.header}>
             <View style={styles.headerContent}>
                 <Text style={styles.title}>🛒 የቀን ግብይት ማጠቃለያ</Text>
                 <Text style={styles.subtitle}>
-                    ደንበኛ የገዙዋቸውን ምርቶችን ከመጠናቸውና ሂሳባችው ጋር ከታች ተቀምጠዋል
+                    {today.fullDate}
                 </Text>
             </View>
         </View>
@@ -44,10 +45,10 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     subtitle: {
-        fontSize: 14,
+        fontSize: 18,
         color: '#ffff',
         textAlign: 'center',
-        textShadowColor: 'rgba(0, 0, 0, 0.75)',
+        textShadowColor: 'rgba(0, 0, 0, 0.9)',
         textShadowOffset: { width: 1, height: 1 },
         textShadowRadius: 5,
     },

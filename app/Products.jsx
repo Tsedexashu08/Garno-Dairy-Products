@@ -123,7 +123,7 @@ export default function DairyOrderComponent() {
         }
         setPaymentModalVisible(true);
     };
-    const snapPoints = ['15%', '50%', '90%'];
+    // const snapPoints = ['15%', '50%', '90%'];
     const saveOrder = async () => {
         if (!selectedPaymentMethod) {
             Alert.alert('ማስታወሻ', 'እባክዎ የክፍያ ዘዴ ይምረጡ');
@@ -139,7 +139,8 @@ export default function DairyOrderComponent() {
                 .from('sales')
                 .insert([{
                     total_amount: getGrandTotal(),
-                    payment_method: selectedPaymentMethod
+                    payment_method: selectedPaymentMethod,
+                    created_at: new Date().toISOString()
                 }])
                 .select()
                 .single();

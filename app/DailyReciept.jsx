@@ -30,24 +30,25 @@ export default function SalesReceiptComponent() {
   const fetchSalesData = useCallback(async () => {
     try {
       setError(null);
-      const { data, error } = await supabase
-        .from('sales')
-        .select(`
-          sale_id,
-          total_amount,
-          payment_method,
-          created_at,
-          sale_items (
-            quantity,
-            unit_price,
-            Products (
-              name,
-              measurement
-            )
-          )
-        `)
-        .order('created_at', { ascending: false });
-
+     const { data, error } = await supabase
+  .from('sales')
+  .select(`
+    sale_id,
+    total_amount,
+    payment_method,
+    created_at,
+    sale_items (
+      quantity,
+      unit_price,
+      Products (
+        name,
+        measurement
+      )
+    )
+  `)
+  .gte('created_at', new Date().toISOString().split('T')[0]) // Today's date only
+  .lt('created_at', new Date(Date.now() + 86400000).toISOString().split('T')[0]) // Tomorrow's date
+  .order('created_at', { ascending: false });
       if (error) throw error;
 
       // Transform the data to group items by sale
@@ -88,29 +89,30 @@ export default function SalesReceiptComponent() {
     setExpandedSale(expandedSale === saleId ? null : saleId);
   };
   const totalSalesAmount = sales.reduce((total, sale) => {
-  return total + parseFloat(sale.total_amount || 0);
-}, 0).toFixed(2);
-
- const handleSaveReport = () => {
-  Alert.alert(
-    'ሪፖርት አረጋግጥ',
-    `የቀን ሪፖርት ማስቀመጥ ትፈልጋለህ? \nጠቅላላ ሽያጭ: $${totalSalesAmount}`,
-    [
-      {
-        text: 'ሰርዝ',
-        style: 'cancel',
-      },
-      {
-        text: 'አረጋግጥ',
-        onPress: () => {
-          // Here you can add logic to save the report
-          // For example: save to database, generate PDF, etc.
-          Alert.alert('በተሳካ ሁኔታ', 'ሪፖርትዎ ተሰቅሏል!');
+    return total + parseFloat(sale.total_amount || 0);
+  }, 0).toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits:3});
+  const handleSaveReport = () => {
+    Alert.alert(
+      'ሪፖርት አረጋግጥ',
+      `የቀን ሪፖርት ማስቀመጥ ትፈልጋለህ? \nጠቅላላ ሽያጭ: $${totalSalesAmount}`,
+      [
+        {
+          text: 'ሰርዝ',
+          style: 'cancel',
         },
-      },
-    ]
-  );
-};
+        {
+          text: 'አረጋግጥ',
+          onPress: () => {
+            // Here you can add logic to save the report
+            // For example: save to database, generate PDF, etc.
+            Alert.alert('በተሳካ ሁኔታ', 'ሪፖርትዎ ተሰቅሏል!');
+          },
+        },
+      ]
+    );
+  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -154,33 +156,48 @@ export default function SalesReceiptComponent() {
       toggleAnimation();
       toggleExpand(sale.sale_id);
     };
-   
-   
+
+  // Add 3 hours to the date
+const frmtedDate = new Date(new Date(sale.created_at).getTime() + (3 * 60 * 60 * 1000)).toLocaleString('en-US', {
+  timeZone: 'Africa/Addis_Ababa', 
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric', 
+  hour: '2-digit',
+  minute: '2-digit'
+})
+
+const time = new Date(new Date(sale.created_at).getTime() + (3 * 60 * 60 * 1000)).toLocaleTimeString('en-US', {
+  timeZone: 'Africa/Addis_Ababa',
+  hour: '2-digit',
+  minute: '2-digit'
+});
+// Example output: "02:45 PM"
     return (
       <View style={styles.card}>
         <View style={styles.cardShadow} />
         <TouchableOpacity onPress={handlePress} style={styles.cardHeader}>
           <View style={styles.headerContent}>
             <View style={styles.headerLeft}>
-              <Text style={styles.saleId}>Sale #{sale.sale_id}</Text>
-              <Text style={styles.date}>{formatDate(sale.created_at)}</Text>
+              <Text style={styles.saleId}>ዛሬ -{time}</Text>
+              <Text style={styles.date}>{(frmtedDate)}</Text>
             </View>
             <View style={styles.headerRight}>
               <Text style={styles.totalAmount}>${sale.total_amount}</Text>
               <Text style={styles.paymentMethod}>
-                {getPaymentMethodText(sale.payment_method)}
+                ክፍያ - በ{getPaymentMethodText(sale.payment_method)}
               </Text>
             </View>
           </View>
           <Animated.View style={{ transform: [{ rotate }] }}>
-            <Text style={styles.expandIcon}>▼</Text>
+            <Text style={styles.expandIcon}>↓</Text>
           </Animated.View>
         </TouchableOpacity>
 
         {isExpanded && (
           <View style={styles.expandedContent}>
             <View style={styles.itemsHeader}>
-              <Text style={styles.itemsTitle}>Items Sold</Text>
+              <Text style={styles.itemsTitle}>የሽያጭ ዝርዝር</Text>
             </View>
             {sale.items.map((item, index) => (
               <View key={index} style={styles.itemRow}>
@@ -215,7 +232,7 @@ export default function SalesReceiptComponent() {
           style={styles.background}
           resizeMode="cover"
         >
-          <RecieptHeader  />
+          <RecieptHeader />
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#4ECDC4" />
             <Text style={styles.loadingText}>Loading Sales History...</Text>
@@ -234,7 +251,7 @@ export default function SalesReceiptComponent() {
           style={styles.background}
           resizeMode="cover"
         >
-          <RecieptHeader  />
+          <RecieptHeader />
           <View style={styles.errorContainer}>
             <Text style={styles.errorText}>Error: {error}</Text>
             <TouchableOpacity style={styles.retryButton} onPress={fetchSalesData}>
@@ -254,7 +271,7 @@ export default function SalesReceiptComponent() {
         style={styles.background}
         resizeMode="cover"
       >
-        <RecieptHeader  />
+        <RecieptHeader />
         <FlatList
           data={sales}
           renderItem={({ item }) => <ReceiptCard sale={item} />}
@@ -268,22 +285,22 @@ export default function SalesReceiptComponent() {
               colors={['#4ECDC4']}
               tintColor="#4ECDC4"
             />
-      
+
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyTitle}>No Sales Found</Text>
+              <Text style={styles.emptyTitle}>ዛሬ የተደረገ ጊብይት የለም</Text>
               <Text style={styles.emptyText}>
-                Sales records will appear here once orders are completed.
+               ዛሬ የተደረጉ ጊብይቶች አልተገኙም። ምርቶችን ለመሸጥ ወደ ሽያጭ ገፅ ይሂዱ።
               </Text>
             </View>
           }
         />
-                  <SalesSummarySection 
-  totalSales={totalSalesAmount}
-  onSave={handleSaveReport}
-/>
-    
+        <SalesSummarySection
+          totalSales={totalSalesAmount}
+          onSave={handleSaveReport}
+        />
+
       </ImageBackground>
     </SafeAreaView>
   );
@@ -337,7 +354,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     padding: 16,
-    paddingBottom: 20,
+    paddingBottom: 120,
   },
   card: {
     backgroundColor: 'rgba(255,255,255,0.95)',
@@ -402,11 +419,11 @@ const styles = StyleSheet.create({
   },
   paymentMethod: {
     fontSize: 14,
-    color: '#4ECDC4',
+    color: '#56c1f6ff',
     fontWeight: '600',
   },
   expandIcon: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#7f8c8d',
     fontWeight: 'bold',
   },
@@ -422,6 +439,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#2c3e50',
+    textAlign: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#dfe6e9',
+    paddingBottom: 8,
   },
   itemRow: {
     flexDirection: 'row',
@@ -504,11 +525,11 @@ const SalesSummarySection = ({ totalSales, onSave }) => {
     <View style={summaryStyles.summaryContainer}>
       <View style={summaryStyles.summaryContent}>
         <View style={summaryStyles.totalSection}>
-          <Text style={summaryStyles.totalLabel}>ጠቅላላ ሽያጭ</Text>
-          <Text style={summaryStyles.totalAmount}>${totalSales}</Text>
+          <Text style={summaryStyles.totalLabel}>የዛሬ ጠቅላላ ሽያጭ</Text>
+          <Text style={summaryStyles.totalAmount}>${totalSales} ብር</Text>
         </View>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={summaryStyles.saveButton}
           onPress={onSave}
         >
@@ -550,7 +571,7 @@ const summaryStyles = StyleSheet.create({
     flex: 1,
   },
   totalLabel: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     color: '#2c3e50',
     marginBottom: 4,
