@@ -16,7 +16,7 @@
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/Untitled design.png",
         "backgroundImage":"./assets/images/Untitled design.png",
-        "monochromeImage": "./assets/images/Untitled design.png",
+        "monochromeImage": "./assets/images/Untitled design.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,

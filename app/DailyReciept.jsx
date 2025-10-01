@@ -16,8 +16,9 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { supabase } from '../services/Database';
-import GeneratePdf from './components/GeneratePdf';
+import DailyReportShareButton from './components/GeneratePdf';
 import RecieptHeader from './components/RecieptHeader ';
+import getEthiopianDateWithAmharic from './EthiopianDate';
 
 export default function SalesReceiptComponent() {
   const [sales, setSales] = useState([]);
@@ -31,9 +32,9 @@ export default function SalesReceiptComponent() {
   const fetchSalesData = useCallback(async () => {
     try {
       setError(null);
-     const { data, error } = await supabase
-  .from('sales')
-  .select(`
+      const { data, error } = await supabase
+        .from('sales')
+        .select(`
     sale_id,
     total_amount,
     payment_method,
@@ -47,9 +48,9 @@ export default function SalesReceiptComponent() {
       )
     )
   `)
-  .gte('created_at', new Date().toISOString().split('T')[0]) // Today's date only
-  .lt('created_at', new Date(Date.now() + 86400000).toISOString().split('T')[0]) // Tomorrow's date
-  .order('created_at', { ascending: false });
+        .gte('created_at', new Date().toISOString().split('T')[0]) // Today's date only
+        .lt('created_at', new Date(Date.now() + 86400000).toISOString().split('T')[0]) // Tomorrow's date
+        .order('created_at', { ascending: false });
       if (error) throw error;
 
       // Transform the data to group items by sale
@@ -93,7 +94,8 @@ export default function SalesReceiptComponent() {
     return total + parseFloat(sale.total_amount || 0);
   }, 0).toLocaleString('en-US', {
     minimumFractionDigits: 2,
-    maximumFractionDigits:3});
+    maximumFractionDigits: 3
+  });
   const handleSaveReport = () => {
     Alert.alert(
       'ሪፖርት አረጋግጥ',
@@ -115,19 +117,8 @@ export default function SalesReceiptComponent() {
     );
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    }) + ' • ' + date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
 
-  
+
 
   const getPaymentMethodText = (method) => {
     const paymentMethods = {
@@ -150,7 +141,7 @@ export default function SalesReceiptComponent() {
       }).start();
     };
 
-    
+
 
     const rotate = rotateAnim.interpolate({
       inputRange: [0, 1],
@@ -162,22 +153,22 @@ export default function SalesReceiptComponent() {
       toggleExpand(sale.sale_id);
     };
 
-  // Add 3 hours to the date
-const frmtedDate = new Date(new Date(sale.created_at).getTime() + (3 * 60 * 60 * 1000)).toLocaleString('en-US', {
-  timeZone: 'Africa/Addis_Ababa', 
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric', 
-  hour: '2-digit',
-  minute: '2-digit'
-})
+    // Add 3 hours to the date
+    const frmtedDate = new Date(new Date(sale.created_at).getTime() + (3 * 60 * 60 * 1000)).toLocaleString('en-US', {
+      timeZone: 'Africa/Addis_Ababa',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
 
-const time = new Date(new Date(sale.created_at).getTime() + (3 * 60 * 60 * 1000)).toLocaleTimeString('en-US', {
-  timeZone: 'Africa/Addis_Ababa',
-  hour: '2-digit',
-  minute: '2-digit'
-});
-// Example output: "02:45 PM"
+    const time = new Date(new Date(sale.created_at).getTime() + (3 * 60 * 60 * 1000)).toLocaleTimeString('en-US', {
+      timeZone: 'Africa/Addis_Ababa',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
     return (
       <View style={styles.card}>
         <View style={styles.cardShadow} />
@@ -296,7 +287,7 @@ const time = new Date(new Date(sale.created_at).getTime() + (3 * 60 * 60 * 1000)
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyTitle}>ዛሬ የተደረገ ጊብይት የለም</Text>
               <Text style={styles.emptyText}>
-               ዛሬ የተደረጉ ጊብይቶች አልተገኙም። ምርቶችን ለመሸጥ ወደ ሽያጭ ገፅ ይሂዱ።
+                ዛሬ የተደረጉ ጊብይቶች አልተገኙም። ምርቶችን ለመሸጥ ወደ ሽያጭ ገፅ ይሂዱ።
               </Text>
             </View>
           }
@@ -304,6 +295,7 @@ const time = new Date(new Date(sale.created_at).getTime() + (3 * 60 * 60 * 1000)
         <SalesSummarySection
           totalSales={totalSalesAmount}
           onSave={handleSaveReport}
+          salesData={sales}
         />
 
       </ImageBackground>
@@ -524,35 +516,7 @@ const styles = StyleSheet.create({
 });
 
 // SalesSummarySection Component (add this outside your main component)
-const SalesSummarySection = ({ totalSales, onSave }) => {
- const receiptData = {
-  sale_id: 12345,
-  payment_method: 'ቴሌብር',
-  total_amount: 2500.75,
-  created_at: '2025-09-30T18:00:00Z',
-  sale_items: [
-    {
-      quantity: 2,
-      unit_price: 500,
-      Products: {
-        name: 'Sunflower Oil',
-        measurement: '1 Liter',
-        price: 500,
-        has_container: true,
-      },
-    },
-    {
-      quantity: 1,
-      unit_price: 1500.75,
-      Products: {
-        name: 'Teff Flour',
-        measurement: '5 Kg',
-        price: 1500.75,
-        has_container: false,
-      },
-    },
-  ],
-};
+const SalesSummarySection = ({ totalSales, onSave, salesData }) => {
 
   return (
     <View style={summaryStyles.summaryContainer}>
@@ -563,13 +527,12 @@ const SalesSummarySection = ({ totalSales, onSave }) => {
         </View>
 
 
-         <GeneratePdf
-        receiptData={receiptData}
-        fileName={`receipt_${receiptData.sale_id}`}
-        buttonText="የቀን ገቢን መዝግብ"
-        class={summaryStyles.saveButtonText}
-
-      />
+        <DailyReportShareButton
+          salesData={salesData}
+          fileName={`${getEthiopianDateWithAmharic(new Date()).fullDate}-የቀን-ሪፖርት.pdf`}
+          buttonText="የቀን ገቢን መዝግብ"
+          class={summaryStyles.saveButtonText}
+        />
       </View>
     </View>
   );
@@ -577,7 +540,7 @@ const SalesSummarySection = ({ totalSales, onSave }) => {
 
 // Add these styles to your existing StyleSheet
 const summaryStyles = StyleSheet.create({
- 
+
 
   summaryContainer: {
     position: 'absolute',

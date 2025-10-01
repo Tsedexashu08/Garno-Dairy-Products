@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 10,
         paddingVertical: 10,
-        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+        backgroundColor: 'rgba(85, 180, 230, 0.5)',
         shadowColor: 'rgba(255, 255, 255, 0.4)',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,

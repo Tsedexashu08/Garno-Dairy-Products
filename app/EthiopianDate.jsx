@@ -1,4 +1,3 @@
-// utils/ethiopianDateAmharic.js
 import { toEthiopian } from 'ethiopian-calendar-new';
 
 /**
