@@ -8,8 +8,8 @@ const Header = () => {
         <View style={styles.header}>
                 <Link to="/DailyReciept">
             <View style={styles.headerContent}>
-                <Text style={styles.title}>ለገበያ ያቀረብናቸው ምርቶች</Text>
-                <Text style={styles.subtitle}>
+                <Text style={styles.ttl}>ለገበያ ያቀረብናቸው ምርቶች</Text>
+                <Text style={styles.subttl}>
                     ደንበኛ የፈለጋቸውን ምርቶችን ከመጠናቸው ጋር ከታች ይምረጡ
                 </Text>
             </View>
@@ -21,7 +21,7 @@ const Header = () => {
 const styles = StyleSheet.create({
     header: {
         alignItems: 'center',
-        paddingHorizontal: 15,
+        paddingHorizontal: 10,
         paddingVertical: 10,
         backgroundColor: 'rgba(255, 255, 255, 0.5)',
         shadowColor: 'rgba(255, 255, 255, 0.4)',
@@ -33,20 +33,20 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         borderWidth: 2,
         borderColor: '#E0E0E0',
-        marginHorizontal: 10,
-        marginTop: 10,
+        height: 80,
+       
     },
     headerContent: {
         alignItems: 'center',
     },
-    title: {
-        fontSize: 25,
+    ttl: {
+        fontSize: 20,
         fontWeight: 'bold',
         color: '#2D3748',
         textAlign: 'center',
         marginBottom: 5,
     },
-    subtitle: {
+    subttl: {
         fontSize: 14,
         color: '#ffff',
         textAlign: 'center',

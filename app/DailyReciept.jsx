@@ -14,10 +14,10 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { supabase } from '../services/Database';
+import GeneratePdf from './components/GeneratePdf';
 import RecieptHeader from './components/RecieptHeader ';
-
-// const { width } = Dimensions.get('window');
 
 export default function SalesReceiptComponent() {
   const [sales, setSales] = useState([]);
@@ -25,6 +25,7 @@ export default function SalesReceiptComponent() {
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [expandedSale, setExpandedSale] = useState(null);
+  const insets = useSafeAreaInsets();
 
   // Fetch sales data with product details
   const fetchSalesData = useCallback(async () => {
@@ -126,6 +127,8 @@ export default function SalesReceiptComponent() {
     });
   };
 
+  
+
   const getPaymentMethodText = (method) => {
     const paymentMethods = {
       'ቴሌብር': 'ቴሌብር',
@@ -146,6 +149,8 @@ export default function SalesReceiptComponent() {
         useNativeDriver: true,
       }).start();
     };
+
+    
 
     const rotate = rotateAnim.interpolate({
       inputRange: [0, 1],
@@ -225,7 +230,7 @@ const time = new Date(new Date(sale.created_at).getTime() + (3 * 60 * 60 * 1000)
 
   if (loading && !refreshing) {
     return (
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={{ flex: 1, marginTop: insets.top, marginBottom: insets.bottom }}>
         <StatusBar backgroundColor="transparent" translucent barStyle="dark-content" />
         <ImageBackground
           source={'../assets/images/Bg.jpg'}
@@ -244,7 +249,7 @@ const time = new Date(new Date(sale.created_at).getTime() + (3 * 60 * 60 * 1000)
 
   if (error) {
     return (
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={{ flex: 1, marginTop: insets.top, marginBottom: insets.bottom }}>
         <StatusBar backgroundColor="transparent" translucent barStyle="dark-content" />
         <ImageBackground
           source={require('../assets/images/Bg.jpg')}
@@ -264,7 +269,7 @@ const time = new Date(new Date(sale.created_at).getTime() + (3 * 60 * 60 * 1000)
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={{ flex: 1, marginTop: insets.top, marginBottom: insets.bottom }}>
       <StatusBar backgroundColor="transparent" translucent barStyle="dark-content" />
       <ImageBackground
         source={require('../assets/images/Bg.jpg')}
@@ -310,7 +315,6 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: 'transparent',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   background: {
     flex: 1,
@@ -521,6 +525,35 @@ const styles = StyleSheet.create({
 
 // SalesSummarySection Component (add this outside your main component)
 const SalesSummarySection = ({ totalSales, onSave }) => {
+ const receiptData = {
+  sale_id: 12345,
+  payment_method: 'ቴሌብር',
+  total_amount: 2500.75,
+  created_at: '2025-09-30T18:00:00Z',
+  sale_items: [
+    {
+      quantity: 2,
+      unit_price: 500,
+      Products: {
+        name: 'Sunflower Oil',
+        measurement: '1 Liter',
+        price: 500,
+        has_container: true,
+      },
+    },
+    {
+      quantity: 1,
+      unit_price: 1500.75,
+      Products: {
+        name: 'Teff Flour',
+        measurement: '5 Kg',
+        price: 1500.75,
+        has_container: false,
+      },
+    },
+  ],
+};
+
   return (
     <View style={summaryStyles.summaryContainer}>
       <View style={summaryStyles.summaryContent}>
@@ -529,12 +562,14 @@ const SalesSummarySection = ({ totalSales, onSave }) => {
           <Text style={summaryStyles.totalAmount}>${totalSales} ብር</Text>
         </View>
 
-        <TouchableOpacity
-          style={summaryStyles.saveButton}
-          onPress={onSave}
-        >
-          <Text style={summaryStyles.saveButtonText}>📋 ሪፖርት አስቀምጥ</Text>
-        </TouchableOpacity>
+
+         <GeneratePdf
+        receiptData={receiptData}
+        fileName={`receipt_${receiptData.sale_id}`}
+        buttonText="የቀን ገቢን መዝግብ"
+        class={summaryStyles.saveButtonText}
+
+      />
       </View>
     </View>
   );
@@ -542,6 +577,8 @@ const SalesSummarySection = ({ totalSales, onSave }) => {
 
 // Add these styles to your existing StyleSheet
 const summaryStyles = StyleSheet.create({
+ 
+
   summaryContainer: {
     position: 'absolute',
     bottom: 0,

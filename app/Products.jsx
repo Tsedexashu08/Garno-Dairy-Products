@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
@@ -18,6 +17,7 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { supabase } from '../services/Database';
 import Header from './components/Header';
@@ -34,6 +34,8 @@ export default function DairyOrderComponent() {
     const [error, setError] = useState(null);
     const [paymentModalVisible, setPaymentModalVisible] = useState(false);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
+   // safe area padding values
+  const insets = useSafeAreaInsets();
 
 
     // Payment methods in Amharic
@@ -261,7 +263,7 @@ export default function DairyOrderComponent() {
 
     if (loading) {
         return (
-            <SafeAreaView style={{ flex: 1, marginTop: ANDROID_STATUS_BAR_HEIGHT, marginBottom: ANDROID_NAVIGATION_BAR_HEIGHT }}>
+            <SafeAreaView style={{ flex: 1, marginTop: insets.top, marginBottom: insets.bottom }}>
                 <ImageBackground
                     source={require('../assets/images/Bg.jpg')}
                     style={styles.background}
@@ -304,7 +306,7 @@ export default function DairyOrderComponent() {
             style={styles.background}
             resizeMode="cover"
         >
-            <SafeAreaView style={{ flex: 1, marginTop: ANDROID_STATUS_BAR_HEIGHT, marginBottom: ANDROID_NAVIGATION_BAR_HEIGHT }}>
+            <SafeAreaView style={{ flex: 1, marginTop: insets.top, marginBottom: insets.bottom  }}>
                 <Header />
                 {/* <ErrorCard title="የሞባይል ዳታዎን ወይም ዋይፋይ ያብሩ !"/> */}
                 <FlatList

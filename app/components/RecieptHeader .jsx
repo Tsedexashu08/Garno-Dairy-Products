@@ -2,6 +2,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { getEthiopianDateWithAmharic } from '../EthiopianDate';
 
+
 const Header = () => {
     const today = getEthiopianDateWithAmharic();
     return (
