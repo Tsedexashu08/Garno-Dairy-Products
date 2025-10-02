@@ -179,7 +179,10 @@ export default function SalesReceiptComponent() {
               <Text style={styles.date}>{(frmtedDate)}</Text>
             </View>
             <View style={styles.headerRight}>
-              <Text style={styles.totalAmount}>${sale.total_amount}</Text>
+              <Text style={styles.totalAmount}>${sale.total_amount.toLocaleString('en-US', {
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 3
+              })} ብር</Text>
               <Text style={styles.paymentMethod}>
                 ክፍያ - በ{getPaymentMethodText(sale.payment_method)}
               </Text>
@@ -285,9 +288,9 @@ export default function SalesReceiptComponent() {
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyTitle}>ዛሬ የተደረገ ጊብይት የለም</Text>
+              <Text style={styles.emptyTitle}>ዛሬ የተደረገ ግብይት የለም</Text>
               <Text style={styles.emptyText}>
-                ዛሬ የተደረጉ ጊብይቶች አልተገኙም። ምርቶችን ለመሸጥ ወደ ሽያጭ ገፅ ይሂዱ።
+                ዛሬ የተደረጉ ግብይቶች አልተገኙም። ምርቶችን ለመሸጥ ወደ ሽያጭ ገፅ ይሂዱ።
               </Text>
             </View>
           }
@@ -601,5 +604,4 @@ const summaryStyles = StyleSheet.create({
   },
 });
 
-// Also update your FlatList to account for the bottom section
-// Change the contentContainerStyle in your FlatList to:
+

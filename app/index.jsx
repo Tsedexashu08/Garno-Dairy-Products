@@ -7,7 +7,7 @@ import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react
 
 
 const Home = () => {
-  
+
 
   return (
     <ImageBackground
@@ -19,7 +19,7 @@ const Home = () => {
         <Text style={styles.subtitle}>የተለያዩ የምርት ግብይቶች ያስተዳድሩ</Text>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={[styles.button, styles.predictButton]} onPress={() => {router.push('/Products');}} >
+          <TouchableOpacity style={[styles.button, styles.predictButton]} onPress={() => { router.push('/Products'); }} >
             <View style={styles.buttonContent}>
               <FontAwesome name="money" size={32} color="#ffff" />
               <View style={styles.buttonTextContainer}>
@@ -28,9 +28,7 @@ const Home = () => {
               </View>
             </View>
           </TouchableOpacity>
-
-          {/* <Link href={'/Add'}> */}
-          <TouchableOpacity style={[styles.button, styles.rateButton]} onPress={() => {router.push('/DailyReciept');}}>
+          <TouchableOpacity style={[styles.button, styles.rateButton]} onPress={() => { router.push('/DailyReciept'); }}>
             <View style={styles.buttonContent}>
               <FontAwesome name="money" size={32} color="#FFD700" />
               <View style={styles.buttonTextContainer}>
@@ -39,7 +37,7 @@ const Home = () => {
               </View>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, styles.rateButton]}>
+          <TouchableOpacity style={[styles.button, styles.rateButton]} onPress={() => { router.push('/AddProduct'); }}>
             <View style={styles.buttonContent}>
               <FontAwesome name="plus" size={32} color="#FFD700" />
               <View style={styles.buttonTextContainer}>
@@ -48,7 +46,15 @@ const Home = () => {
               </View>
             </View>
           </TouchableOpacity>
-          {/* </Link> */}
+          <TouchableOpacity style={[styles.button, styles.rateButton]} onPress={() => { router.push('/UpdateProduct'); }}>
+            <View style={styles.buttonContent}>
+              <FontAwesome name="edit" size={32} color="#FFD700" />
+              <View style={styles.buttonTextContainer}>
+                <Text style={styles.buttonText}>የዋጋ ማስተካከያ አድርግ</Text>
+                <Text style={styles.buttonSubtext}>የምርቶች ዋጋ ለመቀየር ወይም ለማስተካከል</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
         </View>
         {/* 
                    <View style={styles.statsContainer}>

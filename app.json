@@ -4,7 +4,7 @@
     "slug": "Garno-Dairy-Products",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/Untitled design.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "garnodairyproducts",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -14,9 +14,9 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/Untitled design.png",
-        "backgroundImage":"./assets/images/Untitled design.png",
-        "monochromeImage": "./assets/images/Untitled design.png"
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundImage":"./assets/images/icon.png",
+        "monochromeImage": "./assets/images/icon.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -24,15 +24,14 @@
     },
     "web": {
       "output": "static",
-      "favicon":"./assets/images/Untitled design.png"
+      "favicon":"./assets/images/icon.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/Untitled design.png",
-          "imageWidth": 200,
+          "image": "./assets/images/icon.png",
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
           "dark": {

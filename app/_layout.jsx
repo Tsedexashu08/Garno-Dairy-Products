@@ -4,7 +4,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function RootLayout() {
   return (
-    // 1. Wrap the entire application in the Provider
     <SafeAreaProvider>
       <Stack
         screenOptions={{
@@ -14,6 +13,8 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="Products" />
         <Stack.Screen name="DailyReciept" />
+        <Stack.Screen name="UpdateProduct" />
+        <Stack.Screen name="AddProduct" />
       </Stack>
       <StatusBar style="dark" />
     </SafeAreaProvider>

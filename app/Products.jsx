@@ -8,7 +8,6 @@ import {
     ImageBackground,
     Modal,
     Platform,
-    SafeAreaView,
     ScrollView,
     StatusBar,
     StyleSheet,
@@ -68,28 +67,71 @@ export default function DairyOrderComponent() {
         }
     };
 
-    const handleQuantityChange = (productId, value) => {
-
+ const handleQuantityChange = (productId, value) => {
+    // Allow empty input for better UX
+    if (value === '') {
         setQuantities(prev => ({
             ...prev,
-            [productId]: value
+            [productId]: 0
         }));
-    };
-
-    const incrementQuantity = (productId) => {
+        return;
+    }
+    
+    // Remove any non-numeric characters except decimal point
+    const numericValue = value.replace(/[^0-9.]/g, '');
+    
+    // Handle leading decimal point (e.g., ".5" should become "0.5")
+    let cleanValue = numericValue;
+    if (numericValue.startsWith('.')) {
+        cleanValue = '0' + numericValue;
+    }
+    
+    // Prevent multiple decimal points - keep only the first one
+    const parts = cleanValue.split('.');
+    if (parts.length > 2) {
+        cleanValue = parts[0] + '.' + parts.slice(1).join('');
+    }
+    
+    // Limit to 2 decimal places for quantity (adjust as needed)
+    if (parts.length === 2 && parts[1].length > 2) {
+        cleanValue = parts[0] + '.' + parts[1].substring(0, 2);
+    }
+    
+    // Convert to number, but keep as string if it ends with decimal point for better UX
+    if (cleanValue.endsWith('.')) {
         setQuantities(prev => ({
             ...prev,
-            [productId]: (prev[productId] || 0) + 1
+            [productId]: cleanValue // Keep as string to show the decimal point
         }));
-    };
-
-    const decrementQuantity = (productId) => {
+    } else {
+        const finalValue = parseFloat(cleanValue);
         setQuantities(prev => ({
             ...prev,
-            [productId]: Math.max(0, (prev[productId] || 0) - 1)
+            [productId]: isNaN(finalValue) ? 0 : finalValue
         }));
-    };
+    }
+};
 
+const incrementQuantity = (productId) => {
+    setQuantities(prev => {
+        const currentValue = parseFloat(prev[productId]);
+        return {
+            ...prev,
+            [productId]: (isNaN(currentValue) ? 0 : currentValue) + 1
+        };
+    });
+};
+
+const decrementQuantity = (productId) => {
+    setQuantities(prev => {
+        const currentValue = parseFloat(prev[productId]);
+        const newValue = (isNaN(currentValue) ? 0 : currentValue) - 1;
+        return {
+            ...prev,
+            [productId]: Math.max(0, newValue)
+        };
+    });
+};
     const getReceiptItems = () => {
         return products
             .map((product) => {
@@ -125,7 +167,7 @@ export default function DairyOrderComponent() {
         }
         setPaymentModalVisible(true);
     };
-    // const snapPoints = ['15%', '50%', '90%'];
+    
     const saveOrder = async () => {
         if (!selectedPaymentMethod) {
             Alert.alert('ማስታወሻ', 'እባክዎ የክፍያ ዘዴ ይምረጡ');
@@ -181,8 +223,8 @@ export default function DairyOrderComponent() {
                 { cancelable: false }
             );
         } catch (err) {
-            Alert.alert('ስህተት', 'ትዕዛዝ ሲመዘገብ ስህተት ተፈጥሯል: ' + err.message);
-            console.error('Error saving order:', err);
+            Alert.alert('ስህተት', 'የሞባይል ዳታዎን ወይም ዋይፋይ ያብሩና እደገና ይሞክሩ !' + err.message);
+            // console.error('Error saving order:', err);
         }
     };
 
@@ -242,10 +284,10 @@ export default function DairyOrderComponent() {
                             style={styles.quantityInput}
                             keyboardType="decimal-pad"
                             placeholder="0"
-                            value={currentQuantity === 0 ? '' : String(currentQuantity)}
                             onChangeText={(value) => handleQuantityChange(item.product_id, value)}
                             accessibilityLabel={`Quantity for ${item.name}`}
                             maxLength={10}
+                            value={currentQuantity.toString()}
                         />
 
                         <TouchableOpacity
@@ -263,7 +305,7 @@ export default function DairyOrderComponent() {
 
     if (loading) {
         return (
-            <SafeAreaView style={{ flex: 1, marginTop: insets.top, marginBottom: insets.bottom }}>
+            <View style={{ flex: 1, marginTop: insets.top, marginBottom: insets.bottom }}>
                 <ImageBackground
                     source={require('../assets/images/Bg.jpg')}
                     style={styles.background}
@@ -275,13 +317,13 @@ export default function DairyOrderComponent() {
                         <Text style={styles.loadingText}>Loading Products...</Text>
                     </View>
                 </ImageBackground>
-            </SafeAreaView>
+            </View>
         );
     }
 
     if (error) {
         return (
-            <SafeAreaView style={{ flex: 1, marginTop: ANDROID_STATUS_BAR_HEIGHT, marginBottom: ANDROID_NAVIGATION_BAR_HEIGHT }}>
+            <View style={{ flex: 1, marginTop: ANDROID_STATUS_BAR_HEIGHT, marginBottom: ANDROID_NAVIGATION_BAR_HEIGHT }}>
                 <ImageBackground
                     source={require('../assets/images/Bg.jpg')}
                     style={styles.background}
@@ -296,7 +338,7 @@ export default function DairyOrderComponent() {
                         </TouchableOpacity>
                     </View>
                 </ImageBackground>
-            </SafeAreaView>
+            </View>
         );
     }
 
@@ -306,7 +348,7 @@ export default function DairyOrderComponent() {
             style={styles.background}
             resizeMode="cover"
         >
-            <SafeAreaView style={{ flex: 1, marginTop: insets.top, marginBottom: insets.bottom  }}>
+            <View style={{ flex: 1, marginTop: insets.top, marginBottom: insets.bottom  }}>
                 <Header />
                 {/* <ErrorCard title="የሞባይል ዳታዎን ወይም ዋይፋይ ያብሩ !"/> */}
                 <FlatList
@@ -424,7 +466,7 @@ export default function DairyOrderComponent() {
                     </View>
                 </Modal>
 
-            </SafeAreaView>
+            </View>
         </ImageBackground>
     );
 }
