@@ -90,12 +90,42 @@ export default function SalesReceiptComponent() {
   const toggleExpand = (saleId) => {
     setExpandedSale(expandedSale === saleId ? null : saleId);
   };
+
+  // Calculate total sales amount
   const totalSalesAmount = sales.reduce((total, sale) => {
     return total + parseFloat(sale.total_amount || 0);
   }, 0).toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 3
   });
+
+  // Calculate product statistics
+const getProductStatistics = () => {
+  const productStats = {};
+  
+  sales.forEach(sale => {
+    sale.items.forEach(item => {
+      const productName = item.product_name;
+      if (!productStats[productName]) {
+        productStats[productName] = {
+          name: productName,
+          totalQuantity: 0,
+          totalRevenue: 0,
+          measurement: item.measurement
+        };
+      }
+      productStats[productName].totalQuantity += item.quantity;
+      productStats[productName].totalRevenue += parseFloat(item.item_total);
+    });
+  });
+
+  return Object.values(productStats).sort((a, b) => b.totalRevenue - a.totalRevenue);
+};
+
+const productStatistics = getProductStatistics();
+const totalProductsSold = productStatistics.reduce((total, product) => total + product.totalQuantity, 0);
+const totalTransactions = sales.length;
+const numberOfProductTypes = productStatistics.length; // This counts the different types of products
   const handleSaveReport = () => {
     Alert.alert(
       'ሪፖርት አረጋግጥ',
@@ -108,17 +138,12 @@ export default function SalesReceiptComponent() {
         {
           text: 'አረጋግጥ',
           onPress: () => {
-            // Here you can add logic to save the report
-            // For example: save to database, generate PDF, etc.
             Alert.alert('በተሳካ ሁኔታ', 'ሪፖርትዎ ተሰቅሏል!');
           },
         },
       ]
     );
   };
-
-
-
 
   const getPaymentMethodText = (method) => {
     const paymentMethods = {
@@ -140,8 +165,6 @@ export default function SalesReceiptComponent() {
         useNativeDriver: true,
       }).start();
     };
-
-
 
     const rotate = rotateAnim.interpolate({
       inputRange: [0, 1],
@@ -222,6 +245,51 @@ export default function SalesReceiptComponent() {
     );
   };
 
+ // Sales Summary Card Component
+const SalesSummaryCard = () => (
+  <View style={summaryCardStyles.container}>
+    <View style={summaryCardStyles.header}>
+      <Text style={summaryCardStyles.title}>📊 የዛሬ ሽያጭ ማጠቃለያ</Text>
+      <View style={summaryCardStyles.dateBadge}>
+        <Text style={summaryCardStyles.dateText}>{getEthiopianDateWithAmharic(new Date()).fullDate}</Text>
+      </View>
+    </View>
+
+    <View style={summaryCardStyles.statsGrid}>
+      <View style={summaryCardStyles.statItem}>
+        <Text style={summaryCardStyles.statValue}>${totalSalesAmount}</Text>
+        <Text style={summaryCardStyles.statLabel}>ጠቅላላ ሽያጭ</Text>
+      </View>
+      <View style={summaryCardStyles.statItem}>
+        <Text style={summaryCardStyles.statValue}>{totalTransactions}</Text>
+        <Text style={summaryCardStyles.statLabel}>ግብይቶች</Text>
+      </View>
+      <View style={summaryCardStyles.statItem}>
+        <Text style={summaryCardStyles.statValue}>{numberOfProductTypes}</Text>
+        <Text style={summaryCardStyles.statLabel}>የተለያዩ ምርቶች</Text>
+      </View>
+    </View>
+
+    {productStatistics.length > 0 && (
+      <View style={summaryCardStyles.productsSection}>
+        <Text style={summaryCardStyles.productsTitle}>በምርት ሽያጭ</Text>
+        {productStatistics.map((product, index) => (
+          <View key={index} style={summaryCardStyles.productRow}>
+            <View style={summaryCardStyles.productInfo}>
+              <Text style={summaryCardStyles.productName}>{product.name}</Text>
+              <Text style={summaryCardStyles.productDetails}>
+                {product.totalQuantity} {product.measurement} ተሽጧል
+              </Text>
+            </View>
+            <Text style={summaryCardStyles.productRevenue}>
+              ${product.totalRevenue.toFixed(2)}
+            </Text>
+          </View>
+        ))}
+      </View>
+    )}
+  </View>
+);
   if (loading && !refreshing) {
     return (
       <SafeAreaView style={{ flex: 1, marginTop: insets.top, marginBottom: insets.bottom }}>
@@ -284,8 +352,8 @@ export default function SalesReceiptComponent() {
               colors={['#4ECDC4']}
               tintColor="#4ECDC4"
             />
-
           }
+          ListHeaderComponent={sales.length > 0 ? <SalesSummaryCard /> : null}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyTitle}>ዛሬ የተደረገ ግብይት የለም</Text>
@@ -300,12 +368,120 @@ export default function SalesReceiptComponent() {
           onSave={handleSaveReport}
           salesData={sales}
         />
-
       </ImageBackground>
     </SafeAreaView>
   );
 }
 
+// Sales Summary Card Styles
+const summaryCardStyles = StyleSheet.create({
+  container: {
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    borderRadius: 20,
+    marginBottom: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.5)',
+    borderLeftWidth: 6,
+    borderLeftColor: '#667eea',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+    flex: 1,
+  },
+  dateBadge: {
+    backgroundColor: '#4ECDC4',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  dateText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  statItem: {
+    alignItems: 'center',
+    flex: 1,
+    padding: 10,
+    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+    borderRadius: 12,
+    marginHorizontal: 4,
+  },
+  statValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#667eea',
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#7f8c8d',
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  productsSection: {
+    borderTopWidth: 1,
+    borderTopColor: '#ecf0f1',
+    paddingTop: 16,
+  },
+  productsTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  productRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f8f9fa',
+  },
+  productInfo: {
+    flex: 1,
+  },
+  productName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2c3e50',
+    marginBottom: 2,
+  },
+  productDetails: {
+    fontSize: 12,
+    color: '#7f8c8d',
+  },
+  productRevenue: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#27ae60',
+  },
+});
+
+// Rest of the styles remain the same...
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -520,7 +696,6 @@ const styles = StyleSheet.create({
 
 // SalesSummarySection Component (add this outside your main component)
 const SalesSummarySection = ({ totalSales, onSave, salesData }) => {
-
   return (
     <View style={summaryStyles.summaryContainer}>
       <View style={summaryStyles.summaryContent}>
@@ -528,7 +703,6 @@ const SalesSummarySection = ({ totalSales, onSave, salesData }) => {
           <Text style={summaryStyles.totalLabel}>የዛሬ ጠቅላላ ሽያጭ</Text>
           <Text style={summaryStyles.totalAmount}>${totalSales} ብር</Text>
         </View>
-
 
         <DailyReportShareButton
           salesData={salesData}
@@ -543,8 +717,6 @@ const SalesSummarySection = ({ totalSales, onSave, salesData }) => {
 
 // Add these styles to your existing StyleSheet
 const summaryStyles = StyleSheet.create({
-
-
   summaryContainer: {
     position: 'absolute',
     bottom: 0,
@@ -603,5 +775,3 @@ const summaryStyles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
-

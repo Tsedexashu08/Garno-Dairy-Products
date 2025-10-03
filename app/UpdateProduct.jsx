@@ -98,9 +98,10 @@ const DairyProductsShop = () => {
     const renderProductItem = (item) => (
         <View style={styles.productCard} key={item.product_id}>
             <Image
-                source={{ uri: item.image }}
+                source={item.image ? { uri: item.image } : require('../assets/images/default.png')}
                 style={styles.productImage}
-            // defaultSource={require('../assets/placeholder-image.png')} // Add a placeholder
+                resizeMode="cover"
+                onError={(e) => console.log('Image failed to load:', item.name)}
             />
 
             <View style={styles.productInfo}>
@@ -388,6 +389,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#718096',
         textAlign: 'center',
+        
     },
 });
 

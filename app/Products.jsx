@@ -33,8 +33,8 @@ export default function DairyOrderComponent() {
     const [error, setError] = useState(null);
     const [paymentModalVisible, setPaymentModalVisible] = useState(false);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
-   // safe area padding values
-  const insets = useSafeAreaInsets();
+    // safe area padding values
+    const insets = useSafeAreaInsets();
 
 
     // Payment methods in Amharic
@@ -67,71 +67,71 @@ export default function DairyOrderComponent() {
         }
     };
 
- const handleQuantityChange = (productId, value) => {
-    // Allow empty input for better UX
-    if (value === '') {
-        setQuantities(prev => ({
-            ...prev,
-            [productId]: 0
-        }));
-        return;
-    }
-    
-    // Remove any non-numeric characters except decimal point
-    const numericValue = value.replace(/[^0-9.]/g, '');
-    
-    // Handle leading decimal point (e.g., ".5" should become "0.5")
-    let cleanValue = numericValue;
-    if (numericValue.startsWith('.')) {
-        cleanValue = '0' + numericValue;
-    }
-    
-    // Prevent multiple decimal points - keep only the first one
-    const parts = cleanValue.split('.');
-    if (parts.length > 2) {
-        cleanValue = parts[0] + '.' + parts.slice(1).join('');
-    }
-    
-    // Limit to 2 decimal places for quantity (adjust as needed)
-    if (parts.length === 2 && parts[1].length > 2) {
-        cleanValue = parts[0] + '.' + parts[1].substring(0, 2);
-    }
-    
-    // Convert to number, but keep as string if it ends with decimal point for better UX
-    if (cleanValue.endsWith('.')) {
-        setQuantities(prev => ({
-            ...prev,
-            [productId]: cleanValue // Keep as string to show the decimal point
-        }));
-    } else {
-        const finalValue = parseFloat(cleanValue);
-        setQuantities(prev => ({
-            ...prev,
-            [productId]: isNaN(finalValue) ? 0 : finalValue
-        }));
-    }
-};
+    const handleQuantityChange = (productId, value) => {
+        // Allow empty input for better UX
+        if (value === '') {
+            setQuantities(prev => ({
+                ...prev,
+                [productId]: 0
+            }));
+            return;
+        }
 
-const incrementQuantity = (productId) => {
-    setQuantities(prev => {
-        const currentValue = parseFloat(prev[productId]);
-        return {
-            ...prev,
-            [productId]: (isNaN(currentValue) ? 0 : currentValue) + 1
-        };
-    });
-};
+        // Remove any non-numeric characters except decimal point
+        const numericValue = value.replace(/[^0-9.]/g, '');
 
-const decrementQuantity = (productId) => {
-    setQuantities(prev => {
-        const currentValue = parseFloat(prev[productId]);
-        const newValue = (isNaN(currentValue) ? 0 : currentValue) - 1;
-        return {
-            ...prev,
-            [productId]: Math.max(0, newValue)
-        };
-    });
-};
+        // Handle leading decimal point (e.g., ".5" should become "0.5")
+        let cleanValue = numericValue;
+        if (numericValue.startsWith('.')) {
+            cleanValue = '0' + numericValue;
+        }
+
+        // Prevent multiple decimal points - keep only the first one
+        const parts = cleanValue.split('.');
+        if (parts.length > 2) {
+            cleanValue = parts[0] + '.' + parts.slice(1).join('');
+        }
+
+        // Limit to 2 decimal places for quantity (adjust as needed)
+        if (parts.length === 2 && parts[1].length > 2) {
+            cleanValue = parts[0] + '.' + parts[1].substring(0, 2);
+        }
+
+        // Convert to number, but keep as string if it ends with decimal point for better UX
+        if (cleanValue.endsWith('.')) {
+            setQuantities(prev => ({
+                ...prev,
+                [productId]: cleanValue // Keep as string to show the decimal point
+            }));
+        } else {
+            const finalValue = parseFloat(cleanValue);
+            setQuantities(prev => ({
+                ...prev,
+                [productId]: isNaN(finalValue) ? 0 : finalValue
+            }));
+        }
+    };
+
+    const incrementQuantity = (productId) => {
+        setQuantities(prev => {
+            const currentValue = parseFloat(prev[productId]);
+            return {
+                ...prev,
+                [productId]: (isNaN(currentValue) ? 0 : currentValue) + 1
+            };
+        });
+    };
+
+    const decrementQuantity = (productId) => {
+        setQuantities(prev => {
+            const currentValue = parseFloat(prev[productId]);
+            const newValue = (isNaN(currentValue) ? 0 : currentValue) - 1;
+            return {
+                ...prev,
+                [productId]: Math.max(0, newValue)
+            };
+        });
+    };
     const getReceiptItems = () => {
         return products
             .map((product) => {
@@ -167,7 +167,7 @@ const decrementQuantity = (productId) => {
         }
         setPaymentModalVisible(true);
     };
-    
+
     const saveOrder = async () => {
         if (!selectedPaymentMethod) {
             Alert.alert('ማስታወሻ', 'እባክዎ የክፍያ ዘዴ ይምረጡ');
@@ -259,9 +259,10 @@ const decrementQuantity = (productId) => {
             <View style={styles.card}>
                 <View style={styles.cardShadow} />
                 <Image
-                    source={{ uri: item.image }}
+                    source={item.image ? { uri: item.image } : require('../assets/images/default.png')}
                     style={styles.productImage}
                     resizeMode="cover"
+                    onError={(e) => console.log('Image failed to load:', item.name)}
                 />
                 <View style={styles.productInfo}>
                     <Text style={styles.productName}>{item.name}</Text>
@@ -348,7 +349,7 @@ const decrementQuantity = (productId) => {
             style={styles.background}
             resizeMode="cover"
         >
-            <View style={{ flex: 1, marginTop: insets.top, marginBottom: insets.bottom  }}>
+            <View style={{ flex: 1, marginTop: insets.top, marginBottom: insets.bottom }}>
                 <Header />
                 {/* <ErrorCard title="የሞባይል ዳታዎን ወይም ዋይፋይ ያብሩ !"/> */}
                 <FlatList
