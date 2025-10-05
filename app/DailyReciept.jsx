@@ -245,7 +245,7 @@ const numberOfProductTypes = productStatistics.length; // This counts the differ
     );
   };
 
- // Sales Summary Card Component
+ 
 const SalesSummaryCard = () => (
   <View style={summaryCardStyles.container}>
     <View style={summaryCardStyles.header}>
