@@ -91,7 +91,7 @@ export default function SalesReceiptComponent() {
     setExpandedSale(expandedSale === saleId ? null : saleId);
   };
 
-  // Calculate total sales amount
+ 
   const totalSalesAmount = sales.reduce((total, sale) => {
     return total + parseFloat(sale.total_amount || 0);
   }, 0).toLocaleString('en-US', {
