@@ -99,7 +99,7 @@ export default function SalesReceiptComponent() {
     maximumFractionDigits: 3
   });
 
-  // Calculate product statistics
+  
 const getProductStatistics = () => {
   const productStats = {};
   
