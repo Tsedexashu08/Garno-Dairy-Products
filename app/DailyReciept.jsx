@@ -91,7 +91,7 @@ export default function SalesReceiptComponent() {
     setExpandedSale(expandedSale === saleId ? null : saleId);
   };
 
-  // Calculate total sales amount
+ 
   const totalSalesAmount = sales.reduce((total, sale) => {
     return total + parseFloat(sale.total_amount || 0);
   }, 0).toLocaleString('en-US', {
@@ -99,7 +99,7 @@ export default function SalesReceiptComponent() {
     maximumFractionDigits: 3
   });
 
-  // Calculate product statistics
+  
 const getProductStatistics = () => {
   const productStats = {};
   
@@ -245,7 +245,7 @@ const numberOfProductTypes = productStatistics.length; // This counts the differ
     );
   };
 
- // Sales Summary Card Component
+ 
 const SalesSummaryCard = () => (
   <View style={summaryCardStyles.container}>
     <View style={summaryCardStyles.header}>
