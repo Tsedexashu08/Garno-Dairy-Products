@@ -4,7 +4,7 @@
     "slug": "Garno-Dairy-Products",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/Icon.png",
     "scheme": "garnodairyproducts",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -14,9 +14,9 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/icon.png",
-        "backgroundImage":"./assets/images/icon.png",
-        "monochromeImage": "./assets/images/icon.png"
+        "foregroundImage": "./assets/images/Icon.png",
+        "backgroundImage":"./assets/images/Icon.png",
+        "monochromeImage": "./assets/images/Icon.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -24,19 +24,19 @@
     },
     "web": {
       "output": "static",
-      "favicon":"./assets/images/icon.png"
+      "favicon":"./assets/images/Icon.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/icon.png",
-          "resizeMode": "contain",
+          "image": "./assets/images/Garno-Icon.png",
+          "imageWidth": "100%",
+          "resizeMode": "cover",
           "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#000000"
-          }
+          "backgroundImage":"./assets/images/Bg.jpg",
+          "backgroundImageResizeMode": "cover"
         }
       ]
     ],
